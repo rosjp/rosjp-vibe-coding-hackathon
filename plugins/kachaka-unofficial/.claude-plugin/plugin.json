@@ -1,0 +1,8 @@
+{
+  "name": "kachaka-unofficial",
+  "description": "kachaka ROS 2 ブリッジ経由でのセットアップ・トピック確認・制御を支援するスキル群",
+  "version": "0.1.0",
+  "author": {
+    "name": "rosjp"
+  }
+}

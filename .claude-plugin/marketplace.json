@@ -1,0 +1,15 @@
+{
+  "name": "kachaka-unofficial-skills",
+  "owner": { "name": "rosjp" },
+  "metadata": {
+    "description": "kachaka を ROS 2 から触る作業を支援する非公式エージェントスキル集"
+  },
+  "plugins": [
+    {
+      "name": "kachaka-unofficial",
+      "source": "./plugins/kachaka-unofficial",
+      "description": "kachaka ROS 2 ブリッジ経由でのセットアップ・トピック確認・制御を支援するスキル群",
+      "version": "0.1.0"
+    }
+  ]
+}
