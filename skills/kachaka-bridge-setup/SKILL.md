@@ -6,7 +6,8 @@ description: >
   errors like `error #14: failed to connect to all addresses` or `process has died ...
   exit code -11`, sees repeated `manual control enabled` logs, the robot LED is yellow,
   uses kachaka on macOS / Docker Desktop, or mentions `start_bridge.sh`. キーワード:
-  kachaka, ROS 2, ブリッジ, 接続, API設定, 一時停止, 黄色LED, Docker Desktop, macOS.
+  kachaka, ROS 2, ブリッジ, 接続, API設定, 一時停止, 黄色LED, Docker Desktop,
+  macOS, CycloneDDS, RMW_IMPLEMENTATION, ROS_LOCALHOST_ONLY.
 ---
 
 # kachaka ROS 2 ブリッジのセットアップとトラブルシュート
@@ -27,8 +28,8 @@ nc -zv <kachakaのIP> 26400   # gRPCポート開いてる?
 ```sh
 git clone https://github.com/pf-robotics/kachaka-api.git
 cd kachaka-api/tools/ros2_bridge
-./start_bridge.sh <kachakaのIP>
-# 例: ./start_bridge.sh 192.168.9.230
+ROS_LOCALHOST_ONLY=1 RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ./start_bridge.sh <kachakaのIP>
+# 例: ROS_LOCALHOST_ONLY=1 RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ./start_bridge.sh 192.168.9.230
 ```
 
 **正常起動の合図**:
@@ -39,13 +40,15 @@ cd kachaka-api/tools/ros2_bridge
 ...
 ```
 
-macOS の場合は CycloneDDS で起動:
+この skill では Linux も含めて Docker コンテナ利用を前提に案内する。ブリッジは CycloneDDS で起動するのを推奨。ROS 2 Humble がホストにネイティブインストール済みで、ブリッジやクライアントを同じ Linux 環境内で完結させるなら FastDDS (Fast RTPS) のままでもよい。Docker コンテナ前提では、別コンテナ間の SHM まわりで詰まりやすい。
+
+ハッカソンやハンズオン会では、他参加者の ROS 2 graph と混ざる事故を避けるため、ブリッジ側でもクライアント側でも `ROS_LOCALHOST_ONLY=1` を設定する。
 
 ```sh
-RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ./start_bridge.sh <kachakaのIP>
+ROS_LOCALHOST_ONLY=1 RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ./start_bridge.sh <kachakaのIP>
 ```
 
-(Docker Desktop の Settings → Resources → Network → "Enable host networking" も必要)
+macOS の Docker Desktop では、Settings → Resources → Network → "Enable host networking" も必要。
 
 ## 事前準備チェック
 
@@ -86,13 +89,16 @@ kachaka の **電源ボタンが押されて一時停止モード** になって
 ### macOS で繋がらない
 
 - Docker Desktop の **Host networking を有効化**（Settings → Resources → Network）
-- ブリッジを **CycloneDDS** で起動（FastDDS は同一ホスト最適化前提で macOS VM 越しは不安定）
+- ブリッジを **CycloneDDS** で起動（FastDDS は同一ホスト最適化前提で Docker Desktop の VM 越しは不安定）
   ```sh
-  RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ./start_bridge.sh <IP>
+  ROS_LOCALHOST_ONLY=1 RMW_IMPLEMENTATION=rmw_cyclonedds_cpp ./start_bridge.sh <IP>
   ```
 - それでもダメなら Linux マシン や WSL2 で試す
 
 ## 関連
 
+- 公式リポジトリ（一次情報）: https://github.com/pf-robotics/kachaka-api
+- 必要に応じて公式リポジトリの Issues も確認: https://github.com/pf-robotics/kachaka-api/issues
+- ROS 2 クライアント環境構築 → `kachaka-ros2-env-setup`
 - 自分用コンテナから topic を見る/動かす → `kachaka-ros2-topics`, `kachaka-ros2-control`
 - 人間向けガイド: 同リポジトリ `kachaka-ros2-bridge-guide.md`

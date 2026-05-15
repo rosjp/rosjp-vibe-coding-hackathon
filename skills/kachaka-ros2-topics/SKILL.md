@@ -71,10 +71,13 @@ docker run --rm -it ... -e HOME=/tmp osrf/ros:humble-desktop-full ...
 ### `ros2 topic list` は出るのに `echo` だけ無反応
 
 1. **`--qos-reliability best_effort` を付け忘れていないか** (これが9割)
-2. それでも出ないなら DDS の SHM/コンテナ越境問題 → `kachaka-ros2-control` の DDS設定セクション参照
+2. それでも出ないなら DDS の SHM/コンテナ越境問題 → `kachaka-ros2-env-setup` 参照
 
 ## 関連
 
+- 公式リポジトリ（一次情報）: https://github.com/pf-robotics/kachaka-api
+- 必要に応じて公式リポジトリの Issues も確認: https://github.com/pf-robotics/kachaka-api/issues
 - ブリッジが起動しない / 繋がらない → `kachaka-bridge-setup`
-- 自前コンテナから触る / DDS 設定 / 動かす → `kachaka-ros2-control`
+- ROS 2 クライアント環境構築 / DDS 設定 → `kachaka-ros2-env-setup`
+- teleop / cmd_vel / goal_pose / rviz2 → `kachaka-ros2-control`
 - 人間向けガイド: 同リポジトリ `kachaka-ros2-bridge-guide.md`
